@@ -1,0 +1,39 @@
+# Textured 3D Museum — Walkthrough
+
+## What changed
+
+Applied themed textures to each room's walls and floors, with warm colonial lighting.
+
+## Room Textures
+
+````carousel
+![Hall d'entrée — Colonial plaster walls + terracotta checkered floor](file:///C:/Users/lilia/.gemini/antigravity/brain/5e47de48-9267-494b-b768-aa5f8aa27e0f/hall_dentree_view_1772573661275.png)
+<!-- slide -->
+![Salle 1 (Architectes du Mythe) — Basalt cobblestone floor + dark stone block walls](file:///C:/Users/lilia/.gemini/antigravity/brain/5e47de48-9267-494b-b768-aa5f8aa27e0f/salle_1_view_1772573720492.png)
+<!-- slide -->
+![Salle 2 (L'Archipel des Voix) — Colonial wooden/stone textures visible](file:///C:/Users/lilia/.gemini/antigravity/brain/5e47de48-9267-494b-b768-aa5f8aa27e0f/salle_2_view_1772573757145.png)
+````
+
+## Theme per room
+
+| Room | Walls | Floor | Atmosphere |
+| --- | --- | --- | --- |
+| Hall d'entrée | Aged colonial plaster | Terracotta checkered tile | Warm sepia |
+| Salle 1 | Dark basalt stone blocks | Grey cobblestone | Old Port-Louis |
+| Salle 2 | Polished tropical wood | Dark hardwood planks | Colonial Varangue |
+| Salle 3 | Mossy stone ruins | Overgrown garden path | Botanical garden |
+
+## Files changed
+
+| File | Change |
+| --- | --- |
+| [world.js](file:///c:/Users/lilia/OneDrive%20-%20IPSA/Documents/Perso/0%20-%20Projets/Memoir%20maurice/js/world.js) | Added texture loading, warm lighting, text shadows on labels |
+| assets/ (8 files) | Wall + floor textures for hall and 3 rooms |
+
+## Verification
+
+- ✅ All 8 textures load and render correctly
+- ✅ Each room has distinct visual identity
+- ✅ Labels remain readable (white text + shadow)
+- ✅ Warm colonial lighting atmosphere
+- ✅ No JS errors

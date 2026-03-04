@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D World Explorer</title>
+    <meta name="description" content="Explore a minimalist 3D world with your character using arrow keys.">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <div id="loading-screen">
+        <div class="loader-content">
+            <div class="loader-spinner"></div>
+            <p>Chargement du monde...</p>
+        </div>
+    </div>
+
+    <div id="controls-hint">
+        <div class="hint-box">
+            <div class="key-row">
+                <span class="key">↑</span>
+            </div>
+            <div class="key-row">
+                <span class="key">←</span>
+                <span class="key">↓</span>
+                <span class="key">→</span>
+            </div>
+            <p>Utilise les flèches pour te déplacer</p>
+            <p class="hint-sub">Shift pour courir</p>
+        </div>
+    </div>
+
+    <canvas id="game-canvas"></canvas>
+
+    <!-- Three.js global build (no ES modules needed) -->
+    <script src="lib/three.min.js"></script>
+    <!-- Game scripts (order matters: dependencies first) -->
+    <script src="js/character.js"></script>
+    <script src="js/world.js"></script>
+    <script src="js/controls.js"></script>
+    <script src="js/main.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,42 @@
+# 3D World Explorer — Walkthrough
+
+## What was built
+
+A 3D interactive site where you control a humanoid character in a white minimalist world, using **Three.js** — ready for GitHub Pages.
+
+![Browser recording](file:///C:/Users/lilia/.gemini/antigravity/brain/5e47de48-9267-494b-b768-aa5f8aa27e0f/testing_3d_scene_1772569834311.webp)
+
+## Project structure
+
+| File | Role |
+| --- | --- |
+| [index.html](file:///c:/Users/lilia/OneDrive%20-%20IPSA/Documents/Perso/0%20-%20Projets/Memoir%20maurice/index.html) | Page principale + import map Three.js |
+| [css/style.css](file:///c:/Users/lilia/OneDrive%20-%20IPSA/Documents/Perso/0%20-%20Projets/Memoir%20maurice/css/style.css) | Loading screen, UI hints, canvas |
+| [js/character.js](file:///c:/Users/lilia/OneDrive%20-%20IPSA/Documents/Perso/0%20-%20Projets/Memoir%20maurice/js/character.js) | Personnage humanoïde (primitives 3D) + animation marche/idle |
+| [js/world.js](file:///c:/Users/lilia/OneDrive%20-%20IPSA/Documents/Perso/0%20-%20Projets/Memoir%20maurice/js/world.js) | Monde blanc avec décorations flottantes + éclairage |
+| [js/controls.js](file:///c:/Users/lilia/OneDrive%20-%20IPSA/Documents/Perso/0%20-%20Projets/Memoir%20maurice/js/controls.js) | Gestion clavier (flèches + Shift) |
+| [js/main.js](file:///c:/Users/lilia/OneDrive%20-%20IPSA/Documents/Perso/0%20-%20Projets/Memoir%20maurice/js/main.js) | Game loop, caméra 3ème personne, physique |
+
+## Controls
+
+| Touche | Action |
+| --- | --- |
+| `↑` | Avancer |
+| `↓` | Reculer |
+| `←` `→` | Tourner |
+| `Shift` | Courir |
+
+## Verification
+
+- ✅ Scène 3D rendue correctement (monde blanc, grille, brouillard)
+- ✅ Personnage visible avec textures colorées (corps bleu, peau, cheveux)
+- ✅ Déplacement fluide avec les flèches
+- ✅ Caméra 3ème personne qui suit le personnage
+- ✅ Formes géométriques flottantes + piliers comme repères visuels
+- ✅ Aucune erreur console (sauf favicon manquant)
+
+## Déploiement GitHub Pages
+
+1. Push tout le repo sur GitHub
+2. Settings → Pages → Source: **Deploy from a branch** → `main` / `/ (root)`
+3. Le site sera live à `https://<username>.github.io/<repo-name>/`
