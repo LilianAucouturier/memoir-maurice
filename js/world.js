@@ -279,6 +279,14 @@ class World {
         this.createDoorFrame(-hallW / 2, wallH, 0, 'x', doorW, accentMat);
         this.createDoorFrame(hallW / 2, wallH, 0, 'x', doorW, accentMat);
         this.createDoorFrame(0, wallH, hallD / 2, 'z', doorW, accentMat);
+
+        // ==========================================
+        // PEDESTALS WITH GRIMOIRES
+        // ==========================================
+        this.createPedestalWithGrimoire(0, 0);           // Hall
+        this.createPedestalWithGrimoire(s1cx, s1cz);     // Salle 1
+        this.createPedestalWithGrimoire(s2cx, s2cz);     // Salle 2
+        this.createPedestalWithGrimoire(s3cx, s3cz);     // Salle 3
     }
 
     createDoorFrame(x, wallH, z, axis, doorW, material) {
@@ -297,6 +305,111 @@ class World {
         }
     }
 
+    /**
+     * Create a wooden pedestal with an old grimoire (open book) on top.
+     */
+    createPedestalWithGrimoire(x, z) {
+        var pedestalGroup = new THREE.Group();
+        pedestalGroup.position.set(x, 0, z);
+
+        // --- Pedestal column ---
+        var pedestalMat = new THREE.MeshStandardMaterial({ color: 0x5c3d2e, roughness: 0.85, metalness: 0.05 });
+        var pedestalGeo = new THREE.BoxGeometry(0.45, 1.0, 0.45);
+        var pedestal = new THREE.Mesh(pedestalGeo, pedestalMat);
+        pedestal.position.y = 0.5;
+        pedestal.castShadow = true;
+        pedestal.receiveShadow = true;
+        pedestalGroup.add(pedestal);
+
+        // --- Top plate ---
+        var topMat = new THREE.MeshStandardMaterial({ color: 0x3e2a1a, roughness: 0.7, metalness: 0.1 });
+        var topGeo = new THREE.BoxGeometry(0.55, 0.06, 0.55);
+        var top = new THREE.Mesh(topGeo, topMat);
+        top.position.y = 1.03;
+        top.castShadow = true;
+        pedestalGroup.add(top);
+
+        // --- Base molding ---
+        var baseGeo = new THREE.BoxGeometry(0.55, 0.08, 0.55);
+        var base = new THREE.Mesh(baseGeo, pedestalMat);
+        base.position.y = 0.04;
+        base.castShadow = true;
+        pedestalGroup.add(base);
+
+        // --- Grimoire (open book) ---
+        var grimoireGroup = new THREE.Group();
+        grimoireGroup.position.y = 1.1;
+
+        // Book cover material: worn brown leather
+        var coverMat = new THREE.MeshStandardMaterial({ color: 0x6b3a2a, roughness: 0.95, metalness: 0.0 });
+        // Page material: old yellowed paper
+        var pageMat = new THREE.MeshStandardMaterial({ color: 0xf0e6c8, roughness: 0.9, metalness: 0.0 });
+
+        // Spine (center cylinder)
+        var spineGeo = new THREE.CylinderGeometry(0.02, 0.02, 0.32, 8);
+        var spine = new THREE.Mesh(spineGeo, coverMat);
+        spine.rotation.z = Math.PI / 2;
+        spine.position.y = 0.0;
+        grimoireGroup.add(spine);
+
+        // Left page (slightly tilted open)
+        var pageGeo = new THREE.PlaneGeometry(0.22, 0.30);
+        var leftPage = new THREE.Mesh(pageGeo, pageMat);
+        leftPage.rotation.x = -0.25;
+        leftPage.position.set(-0.12, 0.02, 0);
+        grimoireGroup.add(leftPage);
+
+        // Left cover (under the page)
+        var leftCover = new THREE.Mesh(pageGeo, coverMat);
+        leftCover.rotation.x = -0.25;
+        leftCover.position.set(-0.12, 0.015, 0);
+        grimoireGroup.add(leftCover);
+
+        // Right page (slightly tilted open the other way)
+        var rightPage = new THREE.Mesh(pageGeo, pageMat);
+        rightPage.rotation.x = 0.25;
+        rightPage.position.set(0.12, 0.02, 0);
+        grimoireGroup.add(rightPage);
+
+        // Right cover
+        var rightCover = new THREE.Mesh(pageGeo, coverMat);
+        rightCover.rotation.x = 0.25;
+        rightCover.position.set(0.12, 0.015, 0);
+        grimoireGroup.add(rightCover);
+
+        // Add some "text lines" on the pages using thin boxes
+        var inkMat = new THREE.MeshBasicMaterial({ color: 0x3d2b1f });
+        for (var i = 0; i < 6; i++) {
+            var lineW = 0.12 + Math.random() * 0.06;
+            var lineGeo = new THREE.PlaneGeometry(lineW, 0.005);
+
+            // Left page lines
+            var leftLine = new THREE.Mesh(lineGeo, inkMat);
+            leftLine.rotation.x = -0.25;
+            leftLine.position.set(-0.12, 0.025, -0.1 + i * 0.035);
+            grimoireGroup.add(leftLine);
+
+            // Right page lines
+            var rightLine = new THREE.Mesh(lineGeo, inkMat);
+            rightLine.rotation.x = 0.25;
+            rightLine.position.set(0.12, 0.025, -0.1 + i * 0.035);
+            grimoireGroup.add(rightLine);
+        }
+
+        pedestalGroup.add(grimoireGroup);
+        this.grimoireGroups = this.grimoireGroups || [];
+        this.grimoireGroups.push(grimoireGroup);
+
+        this.scene.add(pedestalGroup);
+
+        // Add the pedestal as a collider so the player walks around it
+        var pedestalBox = new THREE.Box3().setFromCenterAndSize(
+            new THREE.Vector3(x, 0.5, z),
+            new THREE.Vector3(0.7, 2, 0.7)
+        );
+        this.colliders.push(pedestalBox);
+    }
+
     checkCollision(position, radius) {
         radius = radius || 0.35;
         var playerBox = new THREE.Box3(
@@ -311,7 +424,15 @@ class World {
         return false;
     }
 
-    update(time) { }
+    update(time) {
+        // Animate grimoires: gentle floating bob
+        if (this.grimoireGroups) {
+            for (var i = 0; i < this.grimoireGroups.length; i++) {
+                this.grimoireGroups[i].position.y = 1.1 + Math.sin(time * 1.5 + i * 1.2) * 0.03;
+                this.grimoireGroups[i].rotation.y = Math.sin(time * 0.5 + i) * 0.1;
+            }
+        }
+    }
 
     updateLightTarget(playerPos) {
         this.dirLight.position.set(playerPos.x + 8, 18, playerPos.z + 8);
