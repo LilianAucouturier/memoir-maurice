@@ -24,6 +24,7 @@
 
     var world = new World(scene);
     var controls = new Controls();
+    var touchControls = new TouchControls(controls);
     var bookReader = new BookReader();
     var clock = new THREE.Clock();
 
@@ -147,6 +148,7 @@
         if (nearbyPedestal) {
             // Show interact hint
             if (interactHint) interactHint.classList.add('visible');
+            touchControls.showInteract(true);
 
             // Check for R key press
             if (controls.consumeInteract()) {
@@ -155,6 +157,7 @@
         } else {
             // Hide interact hint
             if (interactHint) interactHint.classList.remove('visible');
+            touchControls.showInteract(false);
             controls.consumeInteract(); // consume even if not near
         }
 
