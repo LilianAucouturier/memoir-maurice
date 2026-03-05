@@ -32,14 +32,50 @@
         </div>
     </div>
 
+    <!-- Interact hint (proximity to pedestal) -->
+    <div id="interact-hint">
+        <div class="interact-hint-box">
+            <span class="key-inline">R</span>
+            <span>Lire le grimoire</span>
+        </div>
+    </div>
+
+    <!-- Book Reader Overlay -->
+    <div id="book-reader-overlay">
+        <button id="book-close-btn" class="book-close" aria-label="Fermer">✕</button>
+        <div class="book-container">
+            <button id="book-prev-btn" class="book-nav book-nav-prev" aria-label="Page précédente">‹</button>
+            <div class="book-inner">
+                <div class="book-page book-page-left">
+                    <canvas id="book-page-left"></canvas>
+                </div>
+                <div class="book-spine"></div>
+                <div class="book-page book-page-right">
+                    <canvas id="book-page-right"></canvas>
+                </div>
+            </div>
+            <button id="book-next-btn" class="book-nav book-nav-next" aria-label="Page suivante">›</button>
+        </div>
+        <div id="book-page-info" class="book-page-info"></div>
+    </div>
+
     <canvas id="game-canvas"></canvas>
 
     <!-- Three.js global build (no ES modules needed) -->
     <script src="lib/three.min.js"></script>
+    <!-- PDF.js via CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script>
+        // Configure pdf.js worker
+        if (typeof pdfjsLib !== 'undefined') {
+            pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        }
+    </script>
     <!-- Game scripts (order matters: dependencies first) -->
     <script src="js/character.js"></script>
     <script src="js/world.js"></script>
     <script src="js/controls.js"></script>
+    <script src="js/book-reader.js"></script>
     <script src="js/main.js"></script>
 </body>
 

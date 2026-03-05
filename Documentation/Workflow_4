@@ -1,0 +1,37 @@
+# Visual Style Overhaul — Walkthrough
+
+## Changes Made
+
+### 1. Pencil-Sketch Character ([character.js](file:///c:/Users/lilia/OneDrive%20-%20IPSA/Documents/Perso/0%20-%20Projets/Memoir%20maurice/js/character.js))
+- Replaced all `MeshStandardMaterial` with `MeshBasicMaterial` in sepia/brown tones (flat color, no lighting reaction)
+- Added a **black outline shell** on every body part (head, torso, arms, legs, feet) using `THREE.BackSide` rendering — this creates the pencil-contour effect
+
+### 2. Sepia Aesthetic ([style.css](file:///c:/Users/lilia/OneDrive%20-%20IPSA/Documents/Perso/0%20-%20Projets/Memoir%20maurice/css/style.css))
+- Added a CSS **vignette overlay** (`body::after`) with `mix-blend-mode: multiply` for darkened edges
+- Loading screen updated to parchment tones (`#f4ecd8`)
+- Imported fonts: **Caveat** (handwritten) + **EB Garamond** (serif)
+
+### 3. Pedestals with Grimoires ([world.js](file:///c:/Users/lilia/OneDrive%20-%20IPSA/Documents/Perso/0%20-%20Projets/Memoir%20maurice/js/world.js))
+- New [createPedestalWithGrimoire(x, z)](file:///c:/Users/lilia/OneDrive%20-%20IPSA/Documents/Perso/0%20-%20Projets/Memoir%20maurice/js/world.js#308-412) method
+- Wooden pedestal (column + top plate + base molding)
+- Open grimoire: spine, two angled pages, two covers, and 6 ink text lines per page
+- **Floating animation**: grimoires bob gently and rotate slightly
+- Pedestals added as **colliders** so the character can't walk through them
+- Placed in: Hall, Salle 1, Salle 2, Salle 3
+
+### 4. Page Metadata ([index.html](file:///c:/Users/lilia/OneDrive%20-%20IPSA/Documents/Perso/0%20-%20Projets/Memoir%20maurice/index.html))
+- Title: *Mémoir Maurice — Musée Virtuel*
+- Loading text: *Ouverture du musée...*
+
+## Verification
+All changes pushed to GitHub and verified on the live site:
+
+✅ Pencil-sketch character with visible outlines  
+✅ Sepia tones and vignette overlay active  
+✅ Pedestals with grimoires visible in rooms  
+✅ Grimoire floating animation working  
+✅ Themed loading screen with handwritten font  
+
+**Live site**: [https://lilianaucouturier.github.io/memoir-maurice/](https://lilianaucouturier.github.io/memoir-maurice/)
+
+![Browser verification](C:/Users/lilia/.gemini/antigravity/brain/dea1f458-9545-4350-b66d-06af9e301c24/verify_live_site_1772658408320.webp)

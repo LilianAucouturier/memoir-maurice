@@ -1,6 +1,6 @@
 /**
- * Main application — ties together scene, character, world, and controls.
- * Uses global THREE, Character, World, Controls classes.
+ * Main application — ties together scene, character, world, controls, and book reader.
+ * Uses global THREE, Character, World, Controls, BookReader classes.
  */
 (function () {
     var canvas = document.getElementById('game-canvas');
@@ -24,6 +24,7 @@
 
     var world = new World(scene);
     var controls = new Controls();
+    var bookReader = new BookReader();
     var clock = new THREE.Clock();
 
     var moveSpeed = 3.5;
@@ -34,6 +35,9 @@
     var currentCameraPos = new THREE.Vector3();
     var currentLookAt = new THREE.Vector3();
     var cameraInitialized = false;
+
+    // Interact hint DOM element
+    var interactHint = document.getElementById('interact-hint');
 
     window.addEventListener('resize', function () {
         camera.aspect = window.innerWidth / window.innerHeight;
@@ -46,6 +50,9 @@
     if (loadingScreen) loadingScreen.classList.add('hidden');
 
     function updateCharacter(delta) {
+        // Don't move if reader is open
+        if (bookReader.isOpen) return;
+
         var charObj = character.getObject();
         var isMoving = controls.forward || controls.backward;
         var isTurning = controls.left || controls.right;
@@ -118,11 +125,49 @@
         camera.lookAt(currentLookAt);
     }
 
+    /**
+     * Handle proximity to pedestals and book interaction.
+     */
+    function updateInteraction() {
+        // If reader is open, handle escape
+        if (bookReader.isOpen) {
+            if (controls.consumeEscape()) {
+                bookReader.close();
+            }
+            // Consume interact to avoid re-triggering
+            controls.consumeInteract();
+            // Hide the hint when reader is open
+            if (interactHint) interactHint.classList.remove('visible');
+            return;
+        }
+
+        var charPos = character.getObject().position;
+        var nearbyPedestal = world.getNearbyPedestal(charPos);
+
+        if (nearbyPedestal) {
+            // Show interact hint
+            if (interactHint) interactHint.classList.add('visible');
+
+            // Check for R key press
+            if (controls.consumeInteract()) {
+                bookReader.open(nearbyPedestal.pdfPath);
+            }
+        } else {
+            // Hide interact hint
+            if (interactHint) interactHint.classList.remove('visible');
+            controls.consumeInteract(); // consume even if not near
+        }
+
+        // Always consume escape if not in reader
+        controls.consumeEscape();
+    }
+
     function animate() {
         requestAnimationFrame(animate);
         var delta = Math.min(clock.getDelta(), 0.05);
         var elapsed = clock.elapsedTime;
 
+        updateInteraction();
         updateCharacter(delta);
         updateCamera(delta);
         world.update(elapsed);

@@ -283,10 +283,10 @@ class World {
         // ==========================================
         // PEDESTALS WITH GRIMOIRES
         // ==========================================
-        this.createPedestalWithGrimoire(0, 0);           // Hall
-        this.createPedestalWithGrimoire(s1cx, s1cz);     // Salle 1
-        this.createPedestalWithGrimoire(s2cx, s2cz);     // Salle 2
-        this.createPedestalWithGrimoire(s3cx, s3cz);     // Salle 3
+        this.createPedestalWithGrimoire(0, 0, 'assets/memoire.pdf');           // Hall
+        this.createPedestalWithGrimoire(s1cx, s1cz, 'assets/memoire.pdf');     // Salle 1
+        this.createPedestalWithGrimoire(s2cx, s2cz, 'assets/memoire.pdf');     // Salle 2
+        this.createPedestalWithGrimoire(s3cx, s3cz, 'assets/memoire.pdf');     // Salle 3
     }
 
     createDoorFrame(x, wallH, z, axis, doorW, material) {
@@ -306,9 +306,9 @@ class World {
     }
 
     /**
-     * Create a wooden pedestal with an old grimoire (open book) on top.
+     * Create a wooden pedestal with a closed grimoire laying flat on top.
      */
-    createPedestalWithGrimoire(x, z) {
+    createPedestalWithGrimoire(x, z, pdfPath) {
         var pedestalGroup = new THREE.Group();
         pedestalGroup.position.set(x, 0, z);
 
@@ -336,71 +336,95 @@ class World {
         base.castShadow = true;
         pedestalGroup.add(base);
 
-        // --- Grimoire (open book) ---
-        var grimoireGroup = new THREE.Group();
-        grimoireGroup.position.y = 1.1;
+        // --- Closed Grimoire (laying flat on the pedestal) ---
+        var bookGroup = new THREE.Group();
+        // Position the book right on top of the plate (plate top is at y=1.06)
+        bookGroup.position.y = 1.06;
 
-        // Book cover material: worn brown leather
+        // Book dimensions
+        var bookW = 0.35; // width
+        var bookD = 0.25; // depth
+        var bookH = 0.05; // thickness
+
+        // Cover material: worn brown leather
         var coverMat = new THREE.MeshStandardMaterial({ color: 0x6b3a2a, roughness: 0.95, metalness: 0.0 });
+        var coverDarkMat = new THREE.MeshStandardMaterial({ color: 0x4a2518, roughness: 0.9, metalness: 0.02 });
         // Page material: old yellowed paper
         var pageMat = new THREE.MeshStandardMaterial({ color: 0xf0e6c8, roughness: 0.9, metalness: 0.0 });
+        // Spine detail
+        var spineMat = new THREE.MeshStandardMaterial({ color: 0x3e1a0e, roughness: 0.8, metalness: 0.05 });
+        // Gold detail for title
+        var goldMat = new THREE.MeshStandardMaterial({ color: 0xc9a84c, roughness: 0.4, metalness: 0.6 });
 
-        // Spine (center cylinder)
-        var spineGeo = new THREE.CylinderGeometry(0.02, 0.02, 0.32, 8);
-        var spine = new THREE.Mesh(spineGeo, coverMat);
-        spine.rotation.z = Math.PI / 2;
-        spine.position.y = 0.0;
-        grimoireGroup.add(spine);
+        // -- Main book body (pages block) --
+        var pagesGeo = new THREE.BoxGeometry(bookW - 0.02, bookH - 0.015, bookD - 0.02);
+        var pages = new THREE.Mesh(pagesGeo, pageMat);
+        pages.position.y = bookH / 2;
+        pages.castShadow = true;
+        pages.receiveShadow = true;
+        bookGroup.add(pages);
 
-        // Left page (slightly tilted open)
-        var pageGeo = new THREE.PlaneGeometry(0.22, 0.30);
-        var leftPage = new THREE.Mesh(pageGeo, pageMat);
-        leftPage.rotation.x = -0.25;
-        leftPage.position.set(-0.12, 0.02, 0);
-        grimoireGroup.add(leftPage);
+        // -- Bottom cover --
+        var coverGeo = new THREE.BoxGeometry(bookW, 0.006, bookD);
+        var bottomCover = new THREE.Mesh(coverGeo, coverMat);
+        bottomCover.position.y = 0.003;
+        bottomCover.castShadow = true;
+        bottomCover.receiveShadow = true;
+        bookGroup.add(bottomCover);
 
-        // Left cover (under the page)
-        var leftCover = new THREE.Mesh(pageGeo, coverMat);
-        leftCover.rotation.x = -0.25;
-        leftCover.position.set(-0.12, 0.015, 0);
-        grimoireGroup.add(leftCover);
+        // -- Top cover --
+        var topCover = new THREE.Mesh(coverGeo, coverMat);
+        topCover.position.y = bookH - 0.003;
+        topCover.castShadow = true;
+        topCover.receiveShadow = true;
+        bookGroup.add(topCover);
 
-        // Right page (slightly tilted open the other way)
-        var rightPage = new THREE.Mesh(pageGeo, pageMat);
-        rightPage.rotation.x = 0.25;
-        rightPage.position.set(0.12, 0.02, 0);
-        grimoireGroup.add(rightPage);
+        // -- Spine (left edge) --
+        var spineGeo = new THREE.BoxGeometry(0.012, bookH + 0.004, bookD + 0.004);
+        var spine = new THREE.Mesh(spineGeo, spineMat);
+        spine.position.set(-bookW / 2 + 0.006, bookH / 2, 0);
+        spine.castShadow = true;
+        bookGroup.add(spine);
 
-        // Right cover
-        var rightCover = new THREE.Mesh(pageGeo, coverMat);
-        rightCover.rotation.x = 0.25;
-        rightCover.position.set(0.12, 0.015, 0);
-        grimoireGroup.add(rightCover);
+        // -- Gold title decoration on top cover --
+        var titleGeo = new THREE.BoxGeometry(bookW * 0.5, 0.002, 0.015);
+        var title = new THREE.Mesh(titleGeo, goldMat);
+        title.position.set(0.02, bookH + 0.001, 0);
+        bookGroup.add(title);
 
-        // Add some "text lines" on the pages using thin boxes
-        var inkMat = new THREE.MeshBasicMaterial({ color: 0x3d2b1f });
-        for (var i = 0; i < 6; i++) {
-            var lineW = 0.12 + Math.random() * 0.06;
-            var lineGeo = new THREE.PlaneGeometry(lineW, 0.005);
+        // -- Gold border line on top cover --
+        var borderGeo = new THREE.BoxGeometry(bookW * 0.7, 0.002, 0.004);
+        var border1 = new THREE.Mesh(borderGeo, goldMat);
+        border1.position.set(0.02, bookH + 0.001, bookD * 0.3);
+        bookGroup.add(border1);
+        var border2 = new THREE.Mesh(borderGeo, goldMat);
+        border2.position.set(0.02, bookH + 0.001, -bookD * 0.3);
+        bookGroup.add(border2);
 
-            // Left page lines
-            var leftLine = new THREE.Mesh(lineGeo, inkMat);
-            leftLine.rotation.x = -0.25;
-            leftLine.position.set(-0.12, 0.025, -0.1 + i * 0.035);
-            grimoireGroup.add(leftLine);
-
-            // Right page lines
-            var rightLine = new THREE.Mesh(lineGeo, inkMat);
-            rightLine.rotation.x = 0.25;
-            rightLine.position.set(0.12, 0.025, -0.1 + i * 0.035);
-            grimoireGroup.add(rightLine);
+        // -- Corner gold details --
+        var cornerGeo = new THREE.BoxGeometry(0.02, 0.003, 0.02);
+        var corners = [
+            [bookW / 2 - 0.02, bookH + 0.001, bookD / 2 - 0.02],
+            [bookW / 2 - 0.02, bookH + 0.001, -bookD / 2 + 0.02],
+            [-bookW / 2 + 0.03, bookH + 0.001, bookD / 2 - 0.02],
+            [-bookW / 2 + 0.03, bookH + 0.001, -bookD / 2 + 0.02]
+        ];
+        for (var c = 0; c < corners.length; c++) {
+            var corner = new THREE.Mesh(cornerGeo, goldMat);
+            corner.position.set(corners[c][0], corners[c][1], corners[c][2]);
+            bookGroup.add(corner);
         }
 
-        pedestalGroup.add(grimoireGroup);
-        this.grimoireGroups = this.grimoireGroups || [];
-        this.grimoireGroups.push(grimoireGroup);
-
+        pedestalGroup.add(bookGroup);
         this.scene.add(pedestalGroup);
+
+        // Store pedestal info for proximity detection
+        this.pedestalPositions = this.pedestalPositions || [];
+        this.pedestalPositions.push({
+            x: x,
+            z: z,
+            pdfPath: pdfPath || null
+        });
 
         // Add the pedestal as a collider so the player walks around it
         var pedestalBox = new THREE.Box3().setFromCenterAndSize(
@@ -425,13 +449,25 @@ class World {
     }
 
     update(time) {
-        // Animate grimoires: gentle floating bob
-        if (this.grimoireGroups) {
-            for (var i = 0; i < this.grimoireGroups.length; i++) {
-                this.grimoireGroups[i].position.y = 1.1 + Math.sin(time * 1.5 + i * 1.2) * 0.03;
-                this.grimoireGroups[i].rotation.y = Math.sin(time * 0.5 + i) * 0.1;
+        // Books are static on pedestals — no animation needed
+    }
+
+    /**
+     * Check if a position is near any pedestal. Returns the pedestal info or null.
+     */
+    getNearbyPedestal(position, maxDistance) {
+        maxDistance = maxDistance || 2.0;
+        if (!this.pedestalPositions) return null;
+        for (var i = 0; i < this.pedestalPositions.length; i++) {
+            var p = this.pedestalPositions[i];
+            var dx = position.x - p.x;
+            var dz = position.z - p.z;
+            var dist = Math.sqrt(dx * dx + dz * dz);
+            if (dist < maxDistance) {
+                return p;
             }
         }
+        return null;
     }
 
     updateLightTarget(playerPos) {

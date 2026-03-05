@@ -1,0 +1,40 @@
+# Walkthrough — Livres posés à plat + Lecteur PDF
+
+## Changements effectués
+
+### 1. Grimoire posé à plat sur le pupitre
+Le grimoire est maintenant un **livre fermé réaliste** posé horizontalement sur la plaque du pupitre, avec couverture en cuir, tranche dorée et détails ornementaux. L'animation de flottement a été supprimée.
+
+### 2. Interaction touche R
+Quand le joueur s'approche d'un pupitre (< 2 unités), un indicateur doré **"R — Lire le grimoire"** apparaît. Le déplacement est bloqué pendant la lecture.
+
+### 3. Lecteur PDF en overlay
+Un overlay plein écran s'ouvre avec un **livre ouvert** (2 pages côte à côte). Navigation avec ← → et fermeture avec Échap ou ✕.
+
+## Fichiers modifiés
+
+| Fichier | Action |
+|---------|--------|
+| [world.js](file:///c:/Users/lilia/OneDrive%20-%20IPSA/Documents/Perso/0%20-%20Projets/Memoir%20maurice/js/world.js) | Grimoire refait + détection proximité |
+| [controls.js](file:///c:/Users/lilia/OneDrive%20-%20IPSA/Documents/Perso/0%20-%20Projets/Memoir%20maurice/js/controls.js) | Touches R + Échap |
+| [book-reader.js](file:///c:/Users/lilia/OneDrive%20-%20IPSA/Documents/Perso/0%20-%20Projets/Memoir%20maurice/js/book-reader.js) | Nouveau — classe BookReader |
+| [main.js](file:///c:/Users/lilia/OneDrive%20-%20IPSA/Documents/Perso/0%20-%20Projets/Memoir%20maurice/js/main.js) | Intégration interaction + reader |
+| [index.html](file:///c:/Users/lilia/OneDrive%20-%20IPSA/Documents/Perso/0%20-%20Projets/Memoir%20maurice/index.html) | Overlay HTML + pdf.js CDN |
+| [style.css](file:///c:/Users/lilia/OneDrive%20-%20IPSA/Documents/Perso/0%20-%20Projets/Memoir%20maurice/css/style.css) | Styles overlay + hint |
+
+## Démonstration
+
+````carousel
+![Vue initiale — musée avec pupitre et livre posé à plat](C:\Users\lilia\.gemini\antigravity\brain\a31980ee-f2ca-4ae8-a5f8-9ea27c2a7797\initial_view_1772744266294.png)
+<!-- slide -->
+![Indicateur "R — Lire le grimoire" visible à proximité du pupitre](C:\Users\lilia\.gemini\antigravity\brain\a31980ee-f2ca-4ae8-a5f8-9ea27c2a7797\interact_hint_visible_1772744384184.png)
+<!-- slide -->
+![Lecteur de livre ouvert en overlay](C:\Users\lilia\.gemini\antigravity\brain\a31980ee-f2ca-4ae8-a5f8-9ea27c2a7797\book_reader_open_1772744418864.png)
+````
+
+![Vidéo de démonstration](C:\Users\lilia\.gemini\antigravity\brain\a31980ee-f2ca-4ae8-a5f8-9ea27c2a7797\museum_book_test_1772744231192.webp)
+
+## Prochaine étape
+
+> [!IMPORTANT]
+> Pour afficher ton mémoire, place ton fichier PDF dans **`assets/memoire.pdf`** et lance un serveur local (`python -m http.server 8080`).

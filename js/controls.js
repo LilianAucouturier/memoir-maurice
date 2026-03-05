@@ -10,15 +10,26 @@ class Controls {
             ArrowLeft: false,
             ArrowRight: false,
             ShiftLeft: false,
-            ShiftRight: false
+            ShiftRight: false,
+            KeyR: false,
+            Escape: false
         };
         this.firstInput = false;
+        this._interactPressed = false;
+        this._escapePressed = false;
         window.addEventListener('keydown', (e) => this.onKeyDown(e));
         window.addEventListener('keyup', (e) => this.onKeyUp(e));
     }
 
     onKeyDown(e) {
         if (e.code in this.keys) {
+            // Track single-press for interact and escape
+            if (e.code === 'KeyR' && !this.keys.KeyR) {
+                this._interactPressed = true;
+            }
+            if (e.code === 'Escape' && !this.keys.Escape) {
+                this._escapePressed = true;
+            }
             this.keys[e.code] = true;
             e.preventDefault();
             if (!this.firstInput) {
@@ -44,6 +55,28 @@ class Controls {
                 if (container) container.style.display = 'none';
             }, 2000);
         }
+    }
+
+    /**
+     * Returns true once when R is pressed (consumes the event).
+     */
+    consumeInteract() {
+        if (this._interactPressed) {
+            this._interactPressed = false;
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Returns true once when Escape is pressed (consumes the event).
+     */
+    consumeEscape() {
+        if (this._escapePressed) {
+            this._escapePressed = false;
+            return true;
+        }
+        return false;
     }
 
     get forward() { return this.keys.ArrowUp; }
